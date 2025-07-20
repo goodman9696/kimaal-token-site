@@ -3,118 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KIMAAL Token Claim</title>
+  <title>KIMAAL Token</title>
   <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f3f4f6;
-      padding: 20px;
-      text-align: center;
-    }
-    .container {
-      max-width: 400px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      background-color: #3b82f6;
-      color: white;
-      cursor: pointer;
-    }
-    select, p {
-      margin-top: 15px;
-    }
+    body { font-family: Arial, sans-serif; background: #f3f4f6; padding: 20px; }
+    .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+    button { margin: 10px 0; padding: 10px 15px; font-size: 16px; border: none; border-radius: 5px; background-color: #3b82f6; color: white; cursor: pointer; }
+    select { padding: 8px; border-radius: 5px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>KIMAAL ($KAC)</h2>
-    <p id="desc">Connect your wallet to claim USDT dividends.</p>
-    <button onclick="connectWallet()">🔗 Connect Wallet</button>
-    <p id="usdtBalance">Your Dividends: —</p>
-    <button onclick="claimDividends()">💰 Claim Dividends</button>
+    <h2 id="title">KIMAAL Token Panel</h2>
+    <p id="desc">Connect wallet to claim dividends.</p>
 
-    <select id="lang" onchange="setLang(this.value)">
+    <button onclick="connectWallet()" id="connect">Connect Wallet</button>
+    <button onclick="claimDividends()" id="claim">Claim Dividends</button>
+
+    <hr>
+    <label for="lang">🌐 Language:</label>
+    <select id="lang" onchange="changeLang(this.value)">
       <option value="en">English</option>
       <option value="ru">Русский</option>
       <option value="ua">Українська</option>
     </select>
   </div>
 
-  <script>
-    let web3;
-    let contract;
-    const contractAddress = "YOUR_CONTRACT_ADDRESS_HERE";
-    const abi = [...] // Insert ABI here
-
-    const langs = {
-      en: {
-        desc: "Connect your wallet to claim USDT dividends.",
-        claim: "💰 Claim Dividends",
-        connected: "Wallet connected",
-        balance: "Your Dividends:"
-      },
-      ru: {
-        desc: "Подключите кошелек, чтобы получить дивиденды в USDT.",
-        claim: "💰 Получить дивиденды",
-        connected: "Кошелек подключен",
-        balance: "Ваши дивиденды:"
-      },
-      ua: {
-        desc: "Підключіть гаманець, щоб отримати дивіденди в USDT.",
-        claim: "💰 Отримати дивіденди",
-        connected: "Гаманець підключено",
-        balance: "Ваші дивіденди:"
-      }
-    };
-
-    function setLang(lang) {
-      document.getElementById("desc").textContent = langs[lang].desc;
-      document.querySelector("button:nth-of-type(2)").textContent = langs[lang].claim;
-      if (web3) {
-        document.getElementById("usdtBalance").textContent = langs[lang].balance + " " + window.currentDividends;
-      }
-    }
-
-    async function connectWallet() {
-      if (window.ethereum) {
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        web3 = new Web3(window.ethereum);
-        contract = new web3.eth.Contract(abi, contractAddress);
-        const accounts = await web3.eth.getAccounts();
-        alert(langs[document.getElementById("lang").value].connected);
-        getDividends(accounts[0]);
-      } else {
-        alert("Please install MetaMask!");
-      }
-    }
-
-    async function getDividends(account) {
-      try {
-        const dividends = await contract.methods.getUnpaidDividends(account).call();
-        const usdt = web3.utils.fromWei(dividends, 'ether');
-        window.currentDividends = usdt;
-        document.getElementById("usdtBalance").textContent = langs[document.getElementById("lang").value].balance + " " + usdt;
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    async function claimDividends() {
-      const accounts = await web3.eth.getAccounts();
-      await contract.methods.claim().send({ from: accounts[0] });
-      alert("Dividends claimed!");
-      getDividends(accounts[0]);
-    }
-  </script>
+  <script src="lang.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
